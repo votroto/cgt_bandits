@@ -15,7 +15,7 @@ def _(in_node, out_node, info_dict):
     out_node.label = in_node.name
     info = out_node.append_move(out_node.game.players.chance, lc)
     for i in range(lc):
-        info.actions[i].prob = in_node.action_probs[i]
+        info.actions[i].prob = pg.Decimal(in_node.action_probs[i])
         info.actions[i].label = in_node.action_names[i]
         _nodes_to_efg(in_node.children[i], out_node.children[i], info_dict)
 
@@ -25,12 +25,13 @@ def _(in_node, out_node, info_dict):
     lc = len(list(in_node.children))
     out_node.label = in_node.name
 
-    if in_node.infoset in info_dict:
-        info = out_node.append_move(info_dict[in_node.infoset])
+    infoid = f'{in_node.player}-{in_node.infoset}'
+    if infoid in info_dict:
+        info = out_node.append_move(info_dict[infoid])
     else:
         player = in_node.player % 2
         info = out_node.append_move(out_node.game.players[player], lc)
-        info_dict[in_node.infoset] = info
+        info_dict[infoid] = info
         for i in range(lc):
             info.actions[i].label = in_node.action_names[i]
 

@@ -1,5 +1,5 @@
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
-import cgt_bandits.export_dot
+from cgt_bandits import export_efg
 
 
 # Cards are separated from the rest of history simply for convenience.
@@ -58,5 +58,6 @@ def build_game():
     return build_deal()
 
 
-dot = export_dot.nodes_to_dot(build_game())
-dot.write_pdf("poker.pdf")
+if __name__ == '__main__':
+    efg = export_efg.nodes_to_efg(build_game())
+    print(repr(efg))
