@@ -13,3 +13,9 @@ python test_poker.py > poker.efg
 # To draw any efg file as a pdf:
 python efg_to_pdf.py poker.efg poker.pdf
 ```
+
+## Install
+Install the package directly from Github.
+```
+pip install git+https://github.com/votroto/cgt_bandits.git
+```

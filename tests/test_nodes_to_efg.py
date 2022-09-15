@@ -25,8 +25,8 @@ t "t2" 2 "" { 0, 2 }
 t "t3" 3 "" { 0, 3 }
 '''
 
-class TestStringMethods(unittest.TestCase):
-    def test_upper(self):
+class TestNodesToEfg(unittest.TestCase):
+    def test_sanity(self):
         self.assertEqual(build_example(), expected_efg)
 
 if __name__ == '__main__':
