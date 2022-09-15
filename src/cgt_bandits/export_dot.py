@@ -1,6 +1,6 @@
 from functools import singledispatch
-from utils import fixup_node
-from nodes import ChanceNode, PersonalNode, TerminalNode
+from cgt_bandits.utils import fixup_node
+from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 import random
 import pydot
 import math

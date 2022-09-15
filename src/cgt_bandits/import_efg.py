@@ -1,5 +1,5 @@
 import pygambit as pg
-from nodes import ChanceNode, PersonalNode, TerminalNode
+from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 
 
 def _efg_to_nodes(n):
