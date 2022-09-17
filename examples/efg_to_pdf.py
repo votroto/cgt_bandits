@@ -5,7 +5,7 @@ import sys
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print("usage: python {sys.argv[0]} in.efg out.pdf", file=sys.err)
+        print("usage: python {sys.argv[0]} in.efg out.pdf", file=sys.stderr)
         exit(1)
 
     graph = pg.Game.read_game(sys.argv[1])
