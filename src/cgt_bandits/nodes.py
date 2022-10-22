@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass
@@ -8,19 +9,19 @@ class EFGNode:
 
 @dataclass
 class ChanceNode(EFGNode):
-    children: list[EFGNode]
-    action_names: list[str]
-    action_probs: list[float]
+    children: List[EFGNode]
+    action_names: List[str]
+    action_probs: List[float]
 
 
 @dataclass
 class PersonalNode(EFGNode):
     infoset: int
     player: int
-    children: list[EFGNode]
-    action_names: list[str]
+    children: List[EFGNode]
+    action_names: List[str]
 
 
 @dataclass
 class TerminalNode(EFGNode):
-    payoffs: list[float]
+    payoffs: List[float]
