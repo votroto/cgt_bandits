@@ -1,7 +1,32 @@
 import unittest
 import pygambit as pg
-from nodes_to_efg_poker import expected_poker
 from cgt_bandits import import_efg
+
+
+expected_poker = """EFG 2 R "" { "0" "1" }
+""
+
+c "Deal" 1 "" { "jj" 1/6 "jq" 1/3 "qj" 1/3 "qq" 1/6 } 0
+p "" 1 1 "0-106" { "fold1" "bet" } 0
+t "p1 folded" 1 "" { -1, 1 }
+p "" 2 1 "1-106" { "fold2" "call" } 0
+t "p2 folded" 2 "" { 1, -1 }
+t "tie" 3 "" { 0, 0 }
+p "" 1 1 "0-106" { "fold1" "bet" } 0
+t "p1 folded" 4 "" { -1, 1 }
+p "" 2 2 "1-113" { "fold2" "call" } 0
+t "p2 folded" 5 "" { 1, -1 }
+t "p2 wins" 6 "" { -3, 3 }
+p "" 1 2 "0-113" { "fold1" "bet" } 0
+t "p1 folded" 7 "" { -1, 1 }
+p "" 2 1 "1-106" { "fold2" "call" } 0
+t "p2 folded" 8 "" { 1, -1 }
+t "p1 wins" 9 "" { 3.3, -3.3 }
+p "" 1 2 "0-113" { "fold1" "bet" } 0
+t "p1 folded" 10 "" { -1, 1 }
+p "" 2 2 "1-113" { "fold2" "call" } 0
+t "p2 folded" 11 "" { 1, -1 }
+t "tie" 12 "" { 0, 0 }"""
 
 
 class TestNodesToEfg(unittest.TestCase):
