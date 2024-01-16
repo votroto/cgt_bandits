@@ -1,5 +1,6 @@
 from functools import singledispatch
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
+from fractions import Fraction
 
 
 @singledispatch
@@ -18,10 +19,14 @@ def _(in_node):
     lp = len(inaction_probs)
 
     action_names = inaction_names + [""] * (lc - ln)
-    action_probs = inaction_probs + [float('nan')] * (lc - lp)
+    action_probs = inaction_probs + [0.0] * (lc - lp)
     children = list(map(fixup_node, inchildren))
 
-    out_node = ChanceNode(in_node.name, children, action_names, action_probs)
+    probs = [Fraction(p).limit_denominator() for p in action_probs]
+    probs_sum = sum(probs)
+    probs = [p / probs_sum for p in probs]
+
+    out_node = ChanceNode(in_node.name, children, action_names, probs)
     return out_node
 
 
@@ -35,23 +40,17 @@ def _(in_node):
 
     action_names = inaction_names + [""] * (lc - ln)
     children = list(map(fixup_node, inchildren))
+    player_name = str(in_node.player)
 
-    out_node = PersonalNode(in_node.name, in_node.infoset,
-                            in_node.player, children, action_names)
+    out_node = PersonalNode(
+        in_node.name, in_node.infoset, player_name, children, action_names
+    )
     return out_node
 
 
 @fixup_node.register(TerminalNode)
 def _(in_node):
-    ps = list(in_node.payoffs)
-    lp = len(ps)
-
-    if lp == 2:
-        payoffs = ps
-    elif lp == 1:
-        payoffs = [ps[0], -ps[0]]
-    else:
-        payoffs = [float('nan'), float('nan')]
+    payoffs = list(in_node.payoffs)
 
     out_node = TerminalNode(in_node.name, payoffs)
     return out_node

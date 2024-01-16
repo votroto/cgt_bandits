@@ -4,56 +4,56 @@ from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 import pygambit as pg
 
 
+def _add_moves(node, player, infoset, action_names):
+    game = node.game
+    game.append_move(node, player, action_names)
+
+    try:
+        game.set_infoset(node, infoset)
+    except KeyError:
+        node.infoset.label = infoset
+
+
 @singledispatch
-def _nodes_to_efg(node, out_node, info_dict):
+def _nodes_to_efg(node, pg_node, info_dict):
     raise NotImplementedError("Can not export unexpected type.")
 
 
 @_nodes_to_efg.register(ChanceNode)
-def _(in_node, out_node, info_dict):
-    lc = len(list(in_node.children))
-    out_node.label = in_node.name
-    info = out_node.append_move(out_node.game.players.chance, lc)
-    for i in range(lc):
-        info.actions[i].prob = pg.Decimal(in_node.action_probs[i])
-        info.actions[i].label = in_node.action_names[i]
-        _nodes_to_efg(in_node.children[i], out_node.children[i], info_dict)
+def _(efg_node, pg_node, game):
+    probs = [pg.Rational(p) for p in efg_node.action_probs]
+
+    pg_node.label = efg_node.name
+    game.append_move(pg_node, game.players.chance, efg_node.action_names)
+    game.set_chance_probs(pg_node.infoset, probs)
+
+    for e_child, p_child in zip(efg_node.children, pg_node.children):
+        _nodes_to_efg(e_child, p_child, game)
 
 
 @_nodes_to_efg.register(PersonalNode)
-def _(in_node, out_node, info_dict):
-    lc = len(list(in_node.children))
-    out_node.label = in_node.name
+def _(efg_node, pg_node, game):
+    infoid = f"{efg_node.player}-{efg_node.infoset}"
 
-    infoid = f'{in_node.player}-{in_node.infoset}'
-    if infoid in info_dict:
-        info = out_node.append_move(info_dict[infoid])
-    else:
-        player = in_node.player % 2
-        info = out_node.append_move(out_node.game.players[player], lc)
-        info_dict[infoid] = info
-        for i in range(lc):
-            info.actions[i].label = in_node.action_names[i]
+    pg_node.label = efg_node.name
+    _add_moves(pg_node, efg_node.player, infoid, efg_node.action_names)
 
-    for i in range(lc):
-        _nodes_to_efg(in_node.children[i], out_node.children[i], info_dict)
+    for e_child, p_child in zip(efg_node.children, pg_node.children):
+        _nodes_to_efg(e_child, p_child, game)
 
 
 @_nodes_to_efg.register(TerminalNode)
-def _(in_node, out_node, info_dict):
-    out_node.label = in_node.name
-    out_node.outcome = out_node.game.outcomes.add()
-
-    for (i, p) in enumerate(in_node.payoffs):
-        out_node.outcome[i] = p
+def _(efg_node, pg_node, game):
+    pg_node.label = efg_node.name
+    outcome = game.add_outcome(efg_node.payoffs)
+    game.set_outcome(pg_node, outcome)
 
 
-def nodes_to_efg(root):
-    g = pg.Game.new_tree()
-    g.players.add("p1")
-    g.players.add("p2")
-
+def nodes_to_efg(root, players, name=""):
+    player_names = [str(p) for p in players]
     froot = fixup_node(root)
-    _nodes_to_efg(froot, g.root, dict())
 
-    return g
+    game = pg.Game.new_tree(title=name, players=player_names)
+    _nodes_to_efg(froot, game.root, game)
+
+    return game

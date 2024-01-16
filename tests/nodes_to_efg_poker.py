@@ -2,29 +2,17 @@ from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 from cgt_bandits import export_efg
 
 
-# Cards are separated from the rest of history simply for convenience.
-
-# In fact, this game is so simple we do not even need to keep track of
-# the actions played. We show how to do it only because it might be
-# useful for larger games.
-
-
 def build_terminal(cards, history=[]):
-    # If we are here, a bet must have been followed by call.
     if cards in ["jj", "qq"]:
         return TerminalNode("tie", [0, 0])
     elif cards == "qj":
-        return TerminalNode("p1 wins", [3, -3])
+        return TerminalNode("p1 wins", [3.3, -3.3])
     elif cards == "jq":
         return TerminalNode("p2 wins", [-3, 3])
 
 
 def build_second_player(cards, history=[]):
-    # The second player also knows the first players action,
-    # however if it is his turn, it must have been a bet.
-
-    # Leaving p1's action out changes nothing.
-    infoset = ord(cards[1])  # + hash(history[0])
+    infoset = ord(cards[1])
     actions = ["fold2", "call"]
     children = [
         TerminalNode("p2 folded", [1, -1]),
@@ -35,7 +23,6 @@ def build_second_player(cards, history=[]):
 
 
 def build_first_player(cards, history=[]):
-    # The only information player 1 knows is the card he is holding.
     infoset = ord(cards[0])
     actions = ["fold1", "bet"]
     children = [
@@ -54,10 +41,32 @@ def build_deal():
     return ChanceNode("Deal", children, deals, probs)
 
 
-def build_game():
-    return build_deal()
+def build_poker():
+    efg = export_efg.nodes_to_efg(build_deal(), ("0", "1"))
+    return repr(efg)
 
 
-if __name__ == "__main__":
-    efg = export_efg.nodes_to_efg(build_game(), ["p1", "p2"])
-    print(repr(efg))
+expected_poker = """EFG 2 R "" { "0" "1" }
+""
+
+c "Deal" 1 "" { "jj" 1/6 "jq" 1/3 "qj" 1/3 "qq" 1/6 } 0
+p "" 1 1 "0-106" { "fold1" "bet" } 0
+t "p1 folded" 1 "" { -1, 1 }
+p "" 2 1 "1-106" { "fold2" "call" } 0
+t "p2 folded" 2 "" { 1, -1 }
+t "tie" 3 "" { 0, 0 }
+p "" 1 1 "0-106" { "fold1" "bet" } 0
+t "p1 folded" 4 "" { -1, 1 }
+p "" 2 2 "1-113" { "fold2" "call" } 0
+t "p2 folded" 5 "" { 1, -1 }
+t "p2 wins" 6 "" { -3, 3 }
+p "" 1 2 "0-113" { "fold1" "bet" } 0
+t "p1 folded" 7 "" { -1, 1 }
+p "" 2 1 "1-106" { "fold2" "call" } 0
+t "p2 folded" 8 "" { 1, -1 }
+t "p1 wins" 9 "" { 3.3, -3.3 }
+p "" 1 2 "0-113" { "fold1" "bet" } 0
+t "p1 folded" 10 "" { -1, 1 }
+p "" 2 2 "1-113" { "fold2" "call" } 0
+t "p2 folded" 11 "" { 1, -1 }
+t "tie" 12 "" { 0, 0 }"""

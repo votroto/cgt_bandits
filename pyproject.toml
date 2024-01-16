@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cgt_bandits"
-version = "0.1.1"
+version = "1.0.0"
 authors = [
   { name="Tomas Votroubek", email="votroto1@fel.cvut.cz" },
 ]
@@ -15,6 +15,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pygambit == 16.0.*",
+    "pygambit == 16.1.*",
     "pydot"
 ]

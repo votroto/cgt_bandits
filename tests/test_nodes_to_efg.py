@@ -1,33 +1,25 @@
 import unittest
-from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
-from cgt_bandits import export_efg
+from nodes_to_efg_mini import build_mini, expected_mini
+from nodes_to_efg_poker import build_poker, expected_poker
+from contextlib import redirect_stdout
+from io import StringIO
 
-def build_example():
-    probs = [0.5, 0.5, 0.0]
-    names = ["1", "2", "3"]
-    terms = [
-        TerminalNode("t1", [0, 1]),
-        TerminalNode("t2", [0, 2]),
-        TerminalNode("t3", [0, 3]),
-    ]
-    root = ChanceNode("c", terms, names, probs)
-
-    efg = export_efg.nodes_to_efg(root)
-    return repr(efg)
-
-
-expected_efg = '''EFG 2 R "" { "p1" "p2" }
-""
-
-c "c" 1 "" { "1" 0.5 "2" 0.5 "3" 0 } 0
-t "t1" 1 "" { 0, 1 }
-t "t2" 2 "" { 0, 2 }
-t "t3" 3 "" { 0, 3 }
-'''
 
 class TestNodesToEfg(unittest.TestCase):
-    def test_sanity(self):
-        self.assertEqual(build_example(), expected_efg)
+    def test_mini(self):
+        self.assertEqual(build_mini().strip(), expected_mini)
 
-if __name__ == '__main__':
+    def test_poker(self):
+        self.maxDiff = 1000
+
+        f = StringIO()
+        with redirect_stdout(f):
+            poker = build_poker()
+        s = f.getvalue()
+
+        self.assertEqual(poker.strip(), expected_poker)
+        self.assertEqual(s, "")
+
+
+if __name__ == "__main__":
     unittest.main()

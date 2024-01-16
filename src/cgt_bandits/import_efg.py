@@ -1,10 +1,9 @@
-import pygambit as pg
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 
 
 def _efg_to_nodes(n):
     if n.is_terminal:
-        return TerminalNode(n.label, list(n.outcome))
+        return TerminalNode(n.label, [n.outcome[p] for p in n.game.players])
     elif n.player.is_chance:
         acts = n.infoset.actions
         labels = [a.label for a in acts]
@@ -21,4 +20,3 @@ def _efg_to_nodes(n):
 
 def efg_to_nodes(game):
     return _efg_to_nodes(game.root)
-
