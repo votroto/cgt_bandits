@@ -1,13 +1,17 @@
-from functools import singledispatch
+from functools import singledispatch, lru_cache
 from cgt_bandits.utils import fixup_node
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 import random
 import pydot
-import math
+
+
+@lru_cache()
+def _player_hue(p):
+    return random.random()
 
 
 def _make_personal_node(id, player, **kwargs):
-    col = f"{math.fmod(math.sqrt(2) * player, 1.0)}+0.4+0.95"
+    col = f"{_player_hue(player)}+0.4+0.95"
     kwargs.setdefault("fillcolor", col)
     kwargs.setdefault("style", "filled")
     kwargs.setdefault("shape", "circle")
