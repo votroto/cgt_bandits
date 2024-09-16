@@ -1,5 +1,5 @@
 from functools import singledispatch, lru_cache
-from cgt_bandits.utils import fixup_node
+from cgt_bandits.utils import fixup_nodes
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 import random
 import pydot
@@ -107,7 +107,7 @@ def nodes_to_dot(root):
     graph = pydot.Dot(ranksep=2, rankdir="LR")
 
     isets = dict()
-    froot = fixup_node(root)
+    froot = fixup_nodes(root)
     _nodes_to_dot(froot, graph, isets)
     _add_infosets(graph, isets)
 

@@ -1,5 +1,5 @@
 from functools import singledispatch
-from cgt_bandits.utils import fixup_node
+from cgt_bandits.utils import fixup_nodes
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 import pygambit as pg
 
@@ -16,7 +16,7 @@ def _add_moves(node, player, infoset, action_names):
 
 @singledispatch
 def _nodes_to_efg(node, pg_node, info_dict):
-    raise NotImplementedError("Can not export unexpected type.")
+    raise NotImplementedError("Can not export unexpected type.", node)
 
 
 @_nodes_to_efg.register(ChanceNode)
@@ -51,7 +51,7 @@ def _(efg_node, pg_node, game):
 
 def nodes_to_efg(root, players, name=""):
     player_names = [str(p) for p in players]
-    froot = fixup_node(root)
+    froot = fixup_nodes(root)
 
     game = pg.Game.new_tree(title=name, players=player_names)
     _nodes_to_efg(froot, game.root, game)
