@@ -61,7 +61,8 @@ def _(in_node, graph, info_dict):
     lc = len(in_node.children)
     for i in range(lc):
         child = _nodes_to_dot(in_node.children[i], graph, info_dict)
-        lab = f"{in_node.action_probs[i]:.3f}\n{in_node.action_names[i]}"
+        fprob = float(in_node.action_probs[i])
+        lab = f"{fprob:.3f}\n{in_node.action_names[i]}"
         graph.add_edge(_make_edge(node, child, label=lab))
 
     return node

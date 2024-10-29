@@ -59,5 +59,5 @@ def build_game():
 
 
 if __name__ == "__main__":
-    efg = export_efg.nodes_to_efg(build_game(), ["p1", "p2"])
+    efg = export_efg.nodes_to_efg(build_game(), [0, 1])
     print(repr(efg))
