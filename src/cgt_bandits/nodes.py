@@ -1,10 +1,14 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import List
+import json
 
 
 @dataclass
 class EFGNode:
     name: str
+
+    def __repr__(self):
+        json.dumps(asdict(self))
 
 
 @dataclass
