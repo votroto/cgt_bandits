@@ -1,6 +1,7 @@
 from functools import singledispatch
-from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
+from collections import defaultdict
 from fractions import Fraction
+from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 
 
 def fixup_nodes(root):
@@ -69,3 +70,31 @@ def _(in_node, infos):
 
     out_node = TerminalNode(in_node.name, payoffs)
     return out_node
+
+
+def has_perfect_recall(root):
+    def relevant_actions(player, history):
+        return tuple(filter(lambda x: x[0] == player, history))
+
+    def traverse(node, history):
+        if isinstance(node, PersonalNode):
+            hist = relevant_actions(node.player, history)
+            if hists[node.player].get(node.infoset, hist) != hist:
+                return False
+            hists[node.player][node.infoset] = hist
+
+            for i, child in enumerate(node.children):
+                new_history = history + [(node.player, node.infoset, i)]
+                if not traverse(child, new_history):
+                    return False
+
+        if isinstance(node, ChanceNode):
+            for i, child in enumerate(node.children):
+                new_history = history + [(None, None, i)]
+                if not traverse(child, new_history):
+                    return False
+
+        return True
+
+    hists = defaultdict(dict)
+    return traverse(root, [])
