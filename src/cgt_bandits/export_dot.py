@@ -1,17 +1,18 @@
-from functools import singledispatch, lru_cache
+from functools import singledispatch
 from cgt_bandits.utils import fixup_nodes
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
-import random
+import hashlib
 import pydot
 
 
-@lru_cache()
-def _player_hue(p):
-    return random.random()
+def _consistent_hue(x):
+    hash_bytes = hashlib.sha256(str(x).encode()).digest()
+    hash_int = int.from_bytes(hash_bytes, 'big')
+    return (hash_int % 8) / 8
 
 
 def _make_personal_node(id, player, **kwargs):
-    col = f"{_player_hue(player)}+0.4+0.95"
+    col = f"{_consistent_hue(player)} 0.4 0.95"
     kwargs.setdefault("fillcolor", col)
     kwargs.setdefault("style", "filled")
     kwargs.setdefault("shape", "circle")
@@ -20,7 +21,7 @@ def _make_personal_node(id, player, **kwargs):
 
 
 def _make_chance_node(id, **kwargs):
-    kwargs.setdefault("shape", "circle")
+    kwargs.setdefault("shape", "square")
     node = pydot.Node(id, **kwargs)
     return node
 
@@ -36,14 +37,24 @@ def _make_terminal_node(id, **kwargs):
 
 def _make_infoset_cluster(id, **kwargs):
     kwargs.setdefault("style", "filled")
-    kwargs.setdefault("fillcolor", "0+0+0.9")
+    kwargs.setdefault("fillcolor", "0 0 0.5 0.2")
     kwargs.setdefault("color", "transparent")
     cluster = pydot.Cluster(id, **kwargs)
     return cluster
 
 
-def _make_edge(tail, head, **kwargs):
-    kwargs.setdefault("color", f"{random.random()}+0.8+0.5")
+def _make_edge(tail, head, name, prob, **kwargs):
+    if prob is None:
+        lab = f"{name}"
+        width = 1.0
+    else:
+        lab = f"{float(prob):.3f}\n{name}"
+        width = float(prob) + 1.0
+
+    kwargs.setdefault("color", f"{_consistent_hue(name)} 0.8 0.5")
+    kwargs.setdefault("label", lab)
+    kwargs.setdefault("penwidth", width)
+
     edge = pydot.Edge(tail, head, **kwargs)
     return edge
 
@@ -61,9 +72,9 @@ def _(in_node, graph, info_dict):
     lc = len(in_node.children)
     for i in range(lc):
         child = _nodes_to_dot(in_node.children[i], graph, info_dict)
-        fprob = float(in_node.action_probs[i])
-        lab = f"{fprob:.3f}\n{in_node.action_names[i]}"
-        graph.add_edge(_make_edge(node, child, label=lab))
+        prob = float(in_node.action_probs[i])
+        name = str(in_node.action_names[i])
+        graph.add_edge(_make_edge(node, child, name, prob))
 
     return node
 
@@ -82,16 +93,17 @@ def _(in_node, graph, info_dict):
     lc = len(in_node.children)
     for i in range(lc):
         child = _nodes_to_dot(in_node.children[i], graph, info_dict)
-        lab = f"{in_node.action_names[i]}"
-        graph.add_edge(_make_edge(node, child, label=lab))
+        name = in_node.action_names[i]
+        graph.add_edge(_make_edge(node, child, name, None))
 
     return node
 
 
 @_nodes_to_dot.register(TerminalNode)
 def _(in_node, graph, info_dict):
+    # Handle rational printing
     payoff_string = ", ".join(map(str, in_node.payoffs))
-    lab = f"{in_node.name}\n [{payoff_string}]"
+    lab = f"{in_node.name}\n[{payoff_string}]"
     node = _make_terminal_node(id(in_node), label=lab)
     graph.add_node(node)
 
