@@ -1,5 +1,5 @@
 from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
-from cgt_bandits import export_efg
+from cgt_bandits import export_json
 
 from dataclasses import dataclass, replace, field
 
@@ -30,7 +30,7 @@ def knowledge_player_one(history):
     # Player one also knows whether the other player bet or folded,
     # but ommiting this information changes nothing in the game.
 
-    return hash((history.hand_one, history.past_zero))
+    return hash((history.hand_one, tuple(history.past_zero)))
 
 
 def build_endgame(history):
@@ -90,5 +90,5 @@ def build_deal():
 
 
 if __name__ == "__main__":
-    efg = export_efg.nodes_to_efg(build_deal(), [0, 1])
-    print(repr(efg))
+    game = build_deal()
+    print(export_json.nodes_to_json(game))

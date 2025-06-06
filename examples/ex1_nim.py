@@ -1,7 +1,6 @@
 from cgt_bandits.nodes import PersonalNode, TerminalNode, ChanceNode
-from cgt_bandits import export_efg
-
-import json
+from cgt_bandits import export_json
+from cgt_bandits import import_json
 
 
 def knowledge_player(history):
@@ -56,13 +55,5 @@ def dict_to_nodes(d):
 
 
 if __name__ == "__main__":
-    G = build_game()
-    efg = export_efg.nodes_to_efg(G, [0, 1])
-
-    ss = json.dumps(G, default=vars)
-
-    H = dict_to_nodes(json.loads(ss))
-    print(H)
-
-    print(G == H)
-    # print(repr(efg))
+    game = build_game()
+    print(export_json.nodes_to_json(game))

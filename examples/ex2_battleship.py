@@ -1,5 +1,5 @@
 from cgt_bandits.nodes import PersonalNode, TerminalNode
-from cgt_bandits import export_dot
+from cgt_bandits import export_json
 
 # WARNING: This game is too big to export as Gambit EFG or PDF.
 # Do not try. :)
@@ -94,5 +94,5 @@ def place_1(ship0):
 
 
 if __name__ == "__main__":
-    dot = export_dot.nodes_to_dot(place_0())
-    print(dot)
+    game = place_0()
+    print(export_json.nodes_to_json(place_0()))

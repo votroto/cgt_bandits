@@ -4,8 +4,10 @@ Tools for the Bandits Tree homework.
 ## Installation
 Install the package directly from Github.
 ```
-pip install git+https://github.com/votroto/cgt_bandits.git
+pip install git+https://github.com/votroto/cgt_bandits.git[dot,gambit]
 ```
+Including the support for `Graphviz` (dot) visualizations and the `Gambit` game-theory tools is recommended.
+
 
 ### PDF Output
 The `dot` command from Graphviz is used to render the games as PDFs and must be [installed separately](https://www.graphviz.org/download/).
