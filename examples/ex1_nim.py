@@ -1,6 +1,5 @@
-from cgt_bandits.nodes import PersonalNode, TerminalNode, ChanceNode
+from cgt_bandits.nodes import PersonalNode, TerminalNode
 from cgt_bandits import export_json
-from cgt_bandits import import_json
 
 
 def knowledge_player(history):
@@ -19,6 +18,7 @@ def switch(player):
 
 def build_turn(player, tokens, history, max_grab=2):
     # The last player to take a stone wins.
+
     if tokens == 0:
         return TerminalNode(f"P{player} lost", payoffs(player))
 
@@ -34,24 +34,6 @@ def build_turn(player, tokens, history, max_grab=2):
 def build_game():
     """A five-stone game of NIM"""
     return build_turn(0, 5, [])
-
-
-def dict_to_nodes(d):
-    if "payoffs" in d.keys():
-        return TerminalNode(d["name"], d["payoffs"])
-    elif "action_probs" in d.keys():
-        name = d["name"]
-        actions = d["action_names"]
-        probs = d["action_probs"]
-        children = [dict_to_nodes(c) for c in d["children"]]
-        return ChanceNode(name, children, actions, probs)
-    else:
-        name = d["name"]
-        player = d["player"]
-        actions = d["action_names"]
-        infoset = d["infoset"]
-        children = [dict_to_nodes(c) for c in d["children"]]
-        return PersonalNode(name, infoset, player, children, actions)
 
 
 if __name__ == "__main__":
