@@ -35,3 +35,14 @@ Use the `json_to_pdf.py` example application, if you already have games in eithe
 ```sh
 python json_to_pdf.py game.json game.pdf
 ```
+
+## Development
+Contributions are welcome. Fork the repository on GitHub, then
+```sh
+# Clone the repository
+git clone git@github.com:USERNAME/cgt_bandits.git
+# Install an editable version with dev dependencies
+pip install -e ./cgt_bandits[dev]
+# Make changes... and test
+pytest tests
+```
