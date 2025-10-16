@@ -19,13 +19,13 @@ dependencies = [
 
 [project.optional-dependencies]
 gambit = [
-    "pygambit == 16.1.*"
+    "pygambit == 16.4.*"
 ]
 dot = [
     "pydot == 4.0.*"
 ]
 dev = [
-    "pygambit == 16.1.*",
+    "pygambit == 16.4.*",
     "pydot == 4.0.*",
     "pytest == 8.4.*"
 ]

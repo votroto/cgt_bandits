@@ -1,5 +1,6 @@
 import unittest
 import pygambit as pg
+import io
 from cgt_bandits import import_efg
 
 
@@ -31,7 +32,8 @@ t "tie" 12 "" { 0, 0 }"""
 
 class TestNodesToEfg(unittest.TestCase):
     def test_poker(self):
-        graph = pg.Game.parse_game(expected_poker)
+        io_poker = io.StringIO(expected_poker)
+        graph = pg.gambit.read_efg(io_poker)
         root = import_efg.efg_to_nodes(graph)
 
         expected_names = ["jj", "jq", "qj", "qq"]

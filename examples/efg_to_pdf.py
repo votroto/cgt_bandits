@@ -8,7 +8,7 @@ if __name__ == "__main__":
         print("usage: python {sys.argv[0]} in.efg out.pdf", file=sys.stderr)
         exit(1)
 
-    graph = pg.Game.read_game(sys.argv[1])
+    graph = pg.gambit.read_efg(sys.argv[1])
 
     root = import_efg.efg_to_nodes(graph)
     dot = export_dot.nodes_to_dot(root)

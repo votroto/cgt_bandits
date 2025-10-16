@@ -19,7 +19,7 @@ def build_mini():
     players = ("player0", "player1")
     efg = nodes_to_efg(root, name=game_name, players=players)
 
-    return repr(efg)
+    return efg.to_efg()
 
 
 expected_mini = """EFG 2 R "EFGTEST" { "player0" "player1" }
@@ -72,7 +72,7 @@ def build_deal():
 
 def build_poker():
     efg = nodes_to_efg(build_deal(), ("0", "1"))
-    return repr(efg)
+    return efg.to_efg()
 
 
 expected_poker = """EFG 2 R "" { "0" "1" }
