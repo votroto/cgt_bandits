@@ -3,11 +3,11 @@ from cgt_bandits.nodes import ChanceNode, PersonalNode, TerminalNode
 
 def _efg_to_nodes(n):
     if n.is_terminal:
-        return TerminalNode(n.label, [n.outcome[p] for p in n.game.players])
+        return TerminalNode(n.label, [float(n.outcome[p]) for p in n.game.players])
     elif n.player.is_chance:
         acts = n.infoset.actions
         labels = [a.label for a in acts]
-        probs = [a.prob for a in acts]
+        probs = [float(a.prob) for a in acts]
         children = [_efg_to_nodes(n) for n in n.children]
         return ChanceNode(n.label, children, labels, probs)
     else:
